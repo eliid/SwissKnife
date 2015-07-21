@@ -1,4 +1,4 @@
-package de.renespeck.cfg;
+package de.renespeck.swissknife.cfg;
 
 import java.io.File;
 

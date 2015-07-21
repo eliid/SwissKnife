@@ -1,4 +1,4 @@
-package de.renespeck.db.mongo;
+package de.renespeck.swissknife.db.mongo;
 
 import java.util.Iterator;
 
@@ -13,7 +13,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
-import de.renespeck.cfg.CfgManager;
+import de.renespeck.swissknife.cfg.CfgManager;
 
 public class MongoDB {
 
