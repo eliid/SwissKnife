@@ -2,6 +2,7 @@ package de.renespeck.swissknife.io;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.LogManager;
@@ -11,6 +12,10 @@ import edu.stanford.nlp.io.StringOutputStream;
 
 public class Compress {
     public static final Logger LOG = LogManager.getLogger(Compress.class);
+
+    public static String gunzipIt(Path zipPath) {
+        return gunzipIt(zipPath.toAbsolutePath().toString());
+    }
 
     public static String gunzipIt(String zipFile) {
         byte[] buffer = new byte[1024];
