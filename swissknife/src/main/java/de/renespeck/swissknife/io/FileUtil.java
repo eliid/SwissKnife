@@ -97,7 +97,7 @@ public class FileUtil {
      * @return list of lines
      */
     public static List<String> fileToList(String pathToFile, String commentSymbol) {
-        return fileToList(pathToFile, "UTF-8", commentSymbol);
+        return fileToListCatched(pathToFile, "UTF-8", commentSymbol);
     }
 
     /**
@@ -108,7 +108,7 @@ public class FileUtil {
      * @return list of lines
      */
     public static List<String> fileToList(String pathToFile) {
-        return fileToList(pathToFile, "UTF-8", "");
+        return fileToListCatched(pathToFile, "UTF-8", "");
     }
 
     /**
@@ -123,22 +123,27 @@ public class FileUtil {
      *            be ignored
      * @return list of lines
      */
-    public static List<String> fileToList(String pathToFile, String encoding, String commentSymbol) {
+    public static List<String> fileToList(String pathToFile, String encoding, String commentSymbol) throws IOException {
         BufferedReader br = openFileToRead(pathToFile, encoding);
         List<String> results = new ArrayList<String>();
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (commentSymbol.isEmpty())
+                results.add(line);
+            else if (!commentSymbol.isEmpty() && !line.startsWith(commentSymbol))
+                results.add(line);
+        }
+        br.close();
+        return results;
+    }
+
+    public static List<String> fileToListCatched(String pathToFile, String encoding, String commentSymbol) {
         try {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (commentSymbol.isEmpty())
-                    results.add(line);
-                else if (!commentSymbol.isEmpty() && !line.startsWith(commentSymbol))
-                    results.add(line);
-            }
-            br.close();
+            return fileToList(pathToFile, encoding, commentSymbol);
         } catch (IOException e) {
             LOG.error("\n", e);
+            return new ArrayList<String>();
         }
-        return results;
     }
 
     /**
