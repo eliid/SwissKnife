@@ -1,22 +1,16 @@
-package de.renespeck.swissknife.collections;
+package de.renespeck.swissknife.db.mongo;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.aksw.defacto.restful.utils.Cfg;
-import org.aksw.defacto.restful.utils.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.bson.BsonArray;
-import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -27,35 +21,40 @@ import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
+import de.renespeck.swissknife.cfg.CfgManager;
+
 public class MongoManager {
 
-    static {
-        PropertyConfigurator.configure(Cfg.LOG_FILE);
-    }
+    public static final Logger     LOG        = LogManager.getLogger(MongoManager.class);
+    public static XMLConfiguration config     = CfgManager.getCfg(MongoManager.class);
 
-    public static final Logger         LOG        = LogManager.getLogger(MongoManager.class);
-    public static XMLConfiguration     config     = CfgManager.getCfg(MongoManager.class);
+    public static String           HOST       = "db.host";
+    public static String           PORT       = "db.port";
+    public static String           NAME       = "db.name";
+    public static String           COLLECTION = "db.collection";
 
-    public static String               HOST       = "db.host";
-    public static String               PORT       = "db.port";
-    public static String               NAME       = "db.name";
-    public static String               COLLECTION = "db.collection";
+    protected static MongoClient   mc;
+    protected DB                   db         = null;
+    public DBCollection            coll       = null;
 
-    protected final static MongoClient mc         = new MongoClient(config.getString(HOST), config.getInt(PORT));
-    protected DB                       db         = null;
-    public DBCollection                coll       = null;
+    public String                  name       = null;
+    public String                  collection = null;
 
-    public String                      name       = null;
-    public String                      collection = null;
-
-    private final String               idKey      = "_id";
+    public static final String     idKey      = "_id";
 
     public static MongoManager getMongoManager() {
+        mc = new MongoClient(config.getString(HOST), config.getInt(PORT));
+        MongoManager mm = new MongoManager();
+        return mm.getDefaultConfig();
+    }
+
+    public static MongoManager getMongoManager(String host, int port) {
+        mc = new MongoClient(host, port);
         return new MongoManager();
     }
 
     protected MongoManager() {
-        getDefaultConfig();
+        //
     }
 
     public MongoManager getDefaultConfig() {
@@ -65,9 +64,7 @@ public class MongoManager {
     }
 
     public MongoManager setConfig(String name, String collection) {
-
         disconnect();
-
         this.name = name;
         return setCollection(collection);
     }
@@ -97,13 +94,24 @@ public class MongoManager {
     }
 
     public String insert(String json) {
-        connect();
         try {
             DBObject o = (DBObject) JSON.parse(json);
-            ObjectId id = ObjectId.get();
-            o.put(idKey, id);
+            if (o.get(idKey) == null) {
+                ObjectId id = ObjectId.get();
+                o.put(idKey, id);
+            }
+            return insert(o);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            return "";
+        }
+    }
+
+    private String insert(DBObject o) {
+        connect();
+        try {
             coll.insert(o);
-            return id.toString();
+            return o.get(idKey).toString();
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
             return "";
@@ -168,18 +176,17 @@ public class MongoManager {
         return find(new Document(key, new Document(op, ba)).toJson());
     }
 
+    public void deleteCollection() {
+        connect();
+        coll.drop();
+    }
+
+    public void deleteDB() {
+        connect();
+        db.dropDatabase();
+    }
+
     public static void main(String[] a) throws ParseException {
-
-        MongoManager db = MongoManager.getMongoManager().setCollection("test");
-
-        String id = db.insert("123");
-        LOG.info(id == "" ? "Could not insert" : "inserted");
-
-        id = db.insert(new JSONObject().put("test", "haha").toString());
-        LOG.info(id == "" ? "Could not insert" : "inserted");
-
-        db.findOperation("_id", "$in", new BsonArray(Arrays.asList(new BsonObjectId(new ObjectId(id)))))
-                .forEachRemaining(LOG::info);
 
     }
 }

@@ -1,5 +1,6 @@
 package de.renespeck.swissknife.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,8 +8,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-
-import edu.stanford.nlp.io.StringOutputStream;
 
 public class Compress {
     public static final Logger LOG = LogManager.getLogger(Compress.class);
@@ -19,20 +18,17 @@ public class Compress {
 
     public static String gunzipIt(String zipFile) {
         byte[] buffer = new byte[1024];
-        StringOutputStream sos = new StringOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(zipFile));
             int len;
-            while ((len = gzis.read(buffer)) > 0) {
-                sos.write(buffer, 0, len);
-            }
-
+            while ((len = gzis.read(buffer)) > 0)
+                baos.write(buffer, 0, len);
             gzis.close();
-            sos.close();
-
+            baos.close();
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-        return sos.toString();
+        return baos.toString();
     }
 }
