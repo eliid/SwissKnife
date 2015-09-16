@@ -20,7 +20,7 @@ import de.renespeck.swissknife.cfg.Const;
 public class Requests {
     public static final Logger LOG = LogManager.getLogger(Requests.class);
 
-    public String postForm(String url, Form form) throws ClientProtocolException, IOException {
+    public static String postForm(String url, Form form) throws ClientProtocolException, IOException {
 
         Response response = Request
                 .Post(url)
