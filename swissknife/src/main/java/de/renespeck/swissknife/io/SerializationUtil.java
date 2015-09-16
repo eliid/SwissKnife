@@ -31,7 +31,7 @@ public class SerializationUtil {
      * @throws NotSerializableException
      */
     public static void serialize(String filename, Object o, boolean force) throws NotSerializableException {
-        filename = rootFolder + File.separator + filename;
+        filename = rootFolder + (filename.startsWith(File.separator) ? filename : File.separator + filename);
         LOG.info("serialize: " + filename);
 
         if (!(o instanceof Serializable)) {
@@ -84,7 +84,7 @@ public class SerializationUtil {
      * @return
      */
     public static <T extends Serializable> T deserialize(String filename, Class<T> classs) {
-        filename = rootFolder + File.separator + filename;
+        filename = rootFolder + (filename.startsWith(File.separator) ? filename : File.separator + filename);
         LOG.info("unserialize: " + filename);
         if (new File(filename).exists()) {
 
