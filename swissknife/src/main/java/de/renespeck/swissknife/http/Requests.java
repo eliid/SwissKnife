@@ -18,38 +18,35 @@ import org.json.JSONObject;
 import de.renespeck.swissknife.cfg.Const;
 
 public class Requests {
-    public static final Logger LOG = LogManager.getLogger(Requests.class);
+  public static final Logger LOG = LogManager.getLogger(Requests.class);
 
-    public static String postForm(String url, Form form) throws ClientProtocolException, IOException {
+  public static String postForm(final String url, final Form form)
+      throws ClientProtocolException, IOException {
 
-        Response response = Request
-                .Post(url)
-                .addHeader("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.getMimeType())
-                .addHeader("Accept-Charset", Const.UTF_8.name())
-                .bodyForm(form.build())
-                .execute();
+    final Response response = Request.Post(url)
+        .addHeader("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.getMimeType())
+        .addHeader("Accept-Charset", Const.UTF_8.name()).bodyForm(form.build()).execute();
 
-        HttpResponse httpResponse = response.returnResponse();
-        LOG.info(httpResponse.getStatusLine());
-        HttpEntity entry = httpResponse.getEntity();
-        String r = IOUtils.toString(entry.getContent(), Const.UTF_8);
-        EntityUtils.consume(entry);
-        return r;
-    }
+    final HttpResponse httpResponse = response.returnResponse();
+    LOG.info(httpResponse.getStatusLine());
+    final HttpEntity entry = httpResponse.getEntity();
+    final String r = IOUtils.toString(entry.getContent(), Const.UTF_8);
+    EntityUtils.consume(entry);
+    return r;
+  }
 
-    public static String postJson(String url, JSONObject json) throws ClientProtocolException, IOException {
-        Response response = Request
-                .Post(url)
-                .addHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType())
-                .addHeader("Accept-Charset", Const.UTF_8.name())
-                .bodyString(json.toString(), ContentType.APPLICATION_JSON)
-                .execute();
+  public static String postJson(final String url, final JSONObject json)
+      throws ClientProtocolException, IOException {
+    final Response response =
+        Request.Post(url).addHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType())
+            .addHeader("Accept-Charset", Const.UTF_8.name())
+            .bodyString(json.toString(), ContentType.APPLICATION_JSON).execute();
 
-        HttpResponse httpResponse = response.returnResponse();
-        LOG.info(httpResponse.getStatusLine());
-        HttpEntity entry = httpResponse.getEntity();
-        String r = IOUtils.toString(entry.getContent(), Const.UTF_8);
-        EntityUtils.consume(entry);
-        return r;
-    }
+    final HttpResponse httpResponse = response.returnResponse();
+    LOG.info(httpResponse.getStatusLine());
+    final HttpEntity entry = httpResponse.getEntity();
+    final String r = IOUtils.toString(entry.getContent(), Const.UTF_8);
+    EntityUtils.consume(entry);
+    return r;
+  }
 }

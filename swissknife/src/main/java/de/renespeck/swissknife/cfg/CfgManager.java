@@ -11,51 +11,53 @@ import org.apache.log4j.Logger;
 import de.renespeck.swissknife.io.FileUtil;
 
 /**
- * 
+ *
  * @author rspeck
- * 
+ *
  */
 public class CfgManager {
 
-    public static String        CFG_FOLDER = "config";
-    public static String        CFG_FILE   = "default";
-    public static String        LOG_FILE   = CFG_FOLDER + File.separator + "log4j.properties";
+  public static String CFG_FOLDER = "config";
+  public static String CFG_FILE = "default";
+  public static String LOG_FILE = CFG_FOLDER + File.separator + "log4j.properties";
 
-    private static final Logger LOG        = LogManager.getLogger(CfgManager.class);
+  private static final Logger LOG = LogManager.getLogger(CfgManager.class);
 
-    public static XMLConfiguration getCfg(String className) {
+  public static XMLConfiguration getCfg(final String className) {
 
-        String file = CFG_FOLDER.concat(File.separator).concat(className).concat(".xml");
-        String fileDefault = CFG_FOLDER.concat(File.separator).concat(CFG_FILE).concat(".xml");
+    final String file = CFG_FOLDER.concat(File.separator).concat(className).concat(".xml");
+    final String fileDefault = CFG_FOLDER.concat(File.separator).concat(CFG_FILE).concat(".xml");
 
-        LOG.info("Loading: ".concat(file));
+    LOG.info("Loading: ".concat(file));
 
-        if (FileUtil.fileExists(file))
-            try {
-                return new XMLConfiguration(file);
-            } catch (ConfigurationException e) {
-                LOG.error(e.getLocalizedMessage(), e);
-            }
-        else
-            LOG.warn("Could not find file: ".concat(file));
-
-        LOG.info("Loading default file: ".concat(fileDefault));
-        try {
-            return new XMLConfiguration(fileDefault);
-        } catch (ConfigurationException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
-
-        return null;
+    if (FileUtil.fileExists(file)) {
+      try {
+        return new XMLConfiguration(file);
+      } catch (final ConfigurationException e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
+    } else {
+      LOG.warn("Could not find file: ".concat(file));
     }
 
-    public static XMLConfiguration getCfg(Class<?> classs) {
-        return CfgManager.getCfg(classs.getName());
+    LOG.info("Loading default file: ".concat(fileDefault));
+    try {
+      return new XMLConfiguration(fileDefault);
+    } catch (final ConfigurationException e) {
+      LOG.error(e.getLocalizedMessage(), e);
     }
 
-    public static void printKeys(XMLConfiguration cfg) {
-        Iterator<String> iter = cfg.getKeys();
-        while (iter.hasNext())
-            LOG.info(iter.next());
+    return null;
+  }
+
+  public static XMLConfiguration getCfg(final Class<?> classs) {
+    return CfgManager.getCfg(classs.getName());
+  }
+
+  public static void printKeys(final XMLConfiguration cfg) {
+    final Iterator<String> iter = cfg.getKeys();
+    while (iter.hasNext()) {
+      LOG.info(iter.next());
     }
+  }
 }
