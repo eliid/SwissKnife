@@ -1,6 +1,5 @@
 package de.renespeck.swissknife.db.mongo;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +22,9 @@ import com.mongodb.util.JSON;
 
 import de.renespeck.swissknife.cfg.CfgManager;
 
+/**
+ * Singleton.
+ */
 public class MongoManager {
 
   public static final Logger LOG = LogManager.getLogger(MongoManager.class);
@@ -53,6 +55,9 @@ public class MongoManager {
     return new MongoManager();
   }
 
+  /**
+   * Singleton.
+   */
   protected MongoManager() {
     //
   }
@@ -126,12 +131,14 @@ public class MongoManager {
 
   public Iterator<DBObject> find(final DBObject dbObject) {
     connect();
-    return coll.find(dbObject).iterator();
+    final DBCursor cursor = coll.find(dbObject);
+    final Iterator<DBObject> iter = cursor.iterator();
+    cursor.close();
+    return iter;
   }
 
   public Iterator<DBObject> find(final String json) {
-    connect();
-    return coll.find((DBObject) JSON.parse(json)).iterator();
+    return find((DBObject) JSON.parse(json));
   }
 
   public DBObject findDocumentById(final String id) {
@@ -187,9 +194,5 @@ public class MongoManager {
   public void deleteDB() {
     connect();
     db.dropDatabase();
-  }
-
-  public static void main(final String[] a) throws ParseException {
-
   }
 }

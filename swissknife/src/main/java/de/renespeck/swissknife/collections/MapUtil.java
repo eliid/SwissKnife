@@ -31,24 +31,4 @@ public class MapUtil {
     list.forEach(entry -> result.put(entry.getKey(), entry.getValue()));
     return result;
   }
-
-  /**
-   * <code>
-  public static <K, V extends Comparable<? super V>> Map<K, V> reverseSortByValue(
-      final Map<K, V> map) {
-    final Map<K, V> result = new LinkedHashMap<>();
-    map.entrySet().stream()
-        .sorted(Comparator.comparing(e -> e.getValue(), Comparator.reverseOrder()))
-        .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
-    return result;
-  }
-  
-  public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map) {
-    final Map<K, V> result = new LinkedHashMap<>();
-    map.entrySet().stream().sorted(Comparator.comparing(e -> e.getValue()))
-        .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
-    return result;
-  }
-   </code>
-   */
 }
