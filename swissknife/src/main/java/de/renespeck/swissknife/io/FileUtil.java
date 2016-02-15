@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.SequenceInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -25,8 +28,26 @@ public class FileUtil {
   public static final Logger LOG = LogManager.getLogger(FileUtil.class);
 
   /**
+   * Opens a BufferedReader to read all files.
+   *
+   * @param list of files
+   * @return BufferedReader
+   */
+  public static BufferedReader openFileToRead(final List<String> files) {
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(new InputStreamReader(
+          new SequenceInputStream(new FilesEnumeration(files.toArray(new String[files.size()]))),
+          "UTF-8"));
+    } catch (final UnsupportedEncodingException e) {
+      LOG.error(e.getLocalizedMessage(), e);
+    }
+    return br;
+  }
+
+  /**
    * Opens a BufferedReader to read a file.
-   * 
+   *
    * @param pathToFile path to the file
    * @return BufferedReader
    */
@@ -36,7 +57,7 @@ public class FileUtil {
 
   /**
    * Opens a BufferedReader to read a file.
-   * 
+   *
    * @param pathToFile path to the file
    * @param encoding used encoding (e.g.,"UTF-8")
    * @return BufferedReader
@@ -52,7 +73,7 @@ public class FileUtil {
 
   /**
    * Opens a BufferedWriter to write a file.
-   * 
+   *
    * @param pathToFile path to the file
    * @return BufferedWriter
    */
@@ -62,7 +83,7 @@ public class FileUtil {
 
   /**
    * Opens a BufferedWriter to write a file.
-   * 
+   *
    * @param pathToFile path to the file
    * @param encoding used encoding (e.g.,"UTF-8")
    * @return BufferedWriter
@@ -78,7 +99,7 @@ public class FileUtil {
 
   /**
    * Reads a file to List.
-   * 
+   *
    * @param pathToFile path to the file
    * @param commentSymbol a line in the given file starting with the commentSymbole will be ignored
    * @return list of lines
@@ -89,7 +110,7 @@ public class FileUtil {
 
   /**
    * Reads a file to List.
-   * 
+   *
    * @param pathToFile path to the used file
    * @return list of lines
    */
@@ -99,7 +120,7 @@ public class FileUtil {
 
   /**
    * Reads a file to List.
-   * 
+   *
    * @param pathToFile path to the used file
    * @param encoding used encoding (e.g.,"UTF-8")
    * @param commentSymbol a line in the given file starting with the commentSymbole will be ignored
@@ -132,9 +153,9 @@ public class FileUtil {
   }
 
   /**
-   * 
+   *
    * Downloads and copies to file.
-   * 
+   *
    * @param url source to download and copy
    * @param file path to the file
    */
@@ -143,9 +164,9 @@ public class FileUtil {
   }
 
   /**
-   * 
+   *
    * Downloads and copies to file.
-   * 
+   *
    * @param url source to download and copy
    * @param file path to the file
    */
@@ -163,7 +184,7 @@ public class FileUtil {
 
   /**
    * Checks if a file exists.
-   * 
+   *
    * @param file
    * @return true if the file exists.
    */
@@ -173,7 +194,7 @@ public class FileUtil {
 
   /**
    * Checks if a file exists.
-   * 
+   *
    * @param file
    * @return true if the file exists.
    */
