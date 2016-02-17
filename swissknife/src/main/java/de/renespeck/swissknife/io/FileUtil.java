@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,26 @@ import org.apache.log4j.Logger;
 public class FileUtil {
 
   public static final Logger LOG = LogManager.getLogger(FileUtil.class);
+
+  /**
+   * Gets all file paths in the given folder.
+   *
+   * @param folder
+   * @return list with file paths
+   */
+  public static List<String> filesInFolder(final String folder) {
+    final List<String> list = new ArrayList<>();
+    try {
+      Files.walk(Paths.get(folder)).forEach(filePath -> {
+        if (Files.isRegularFile(filePath)) {
+          list.add(filePath.toAbsolutePath().toString());
+        }
+      });
+    } catch (final IOException e) {
+      LOG.error(e.getLocalizedMessage(), e);
+    }
+    return list;
+  }
 
   /**
    * Opens a BufferedReader to read all files.
