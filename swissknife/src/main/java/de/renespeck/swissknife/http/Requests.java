@@ -20,12 +20,15 @@ import de.renespeck.swissknife.cfg.Const;
 public class Requests {
   public static final Logger LOG = LogManager.getLogger(Requests.class);
 
-  public static String postForm(final String url, final Form form)
+  public static String postForm(final String url, final Form form, final ContentType ct)
       throws ClientProtocolException, IOException {
 
-    final Response response = Request.Post(url)
-        .addHeader("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.getMimeType())
-        .addHeader("Accept-Charset", Const.UTF_8.name()).bodyForm(form.build()).execute();
+    final Response response = Request.Post(url) //
+        .addHeader("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.getMimeType()) //
+        .addHeader("Accept-Charset", Const.UTF_8.name()) //
+        .addHeader("Accept", ct.getMimeType()) //
+        .bodyForm(form.build()) //
+        .execute();
 
     final HttpResponse httpResponse = response.returnResponse();
     LOG.info(httpResponse.getStatusLine());
@@ -35,15 +38,15 @@ public class Requests {
     return r;
   }
 
-  public static String postJson(final String url, final JSONObject json)
+  public static String postJson(final String url, final JSONObject json, final ContentType ct)
       throws ClientProtocolException, IOException {
-    final Response response =
-        Request.Post(url).addHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType())
-            .addHeader("Accept-Charset", Const.UTF_8.name())
-            .bodyString(json.toString(), ContentType.APPLICATION_JSON).execute();
-
+    final Response response = Request.Post(url) //
+        .addHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType()) //
+        .addHeader("Accept-Charset", Const.UTF_8.name()) //
+        .addHeader("Accept", ct.getMimeType()) //
+        .bodyString(json.toString(), ContentType.APPLICATION_JSON) //
+        .execute();
     final HttpResponse httpResponse = response.returnResponse();
-    LOG.info(httpResponse.getStatusLine());
     final HttpEntity entry = httpResponse.getEntity();
     final String r = IOUtils.toString(entry.getContent(), Const.UTF_8);
     EntityUtils.consume(entry);

@@ -14,7 +14,7 @@ public class CollectionUtil {
 
   /**
    * Transforms all strings in the given list to lower case.
-   * 
+   *
    * @param list list with strings
    * @return list with lower case strings
    */
@@ -27,9 +27,9 @@ public class CollectionUtil {
   }
 
   /**
-   * 
+   *
    * Adds normalized string (without accents) to the given set.
-   * 
+   *
    * @param set set with strings
    * @return set with normalized strings
    */
@@ -48,7 +48,7 @@ public class CollectionUtil {
 
   /**
    * Converts a String in list format (["1st element",2nd element"]) to a list of Strings.
-   * 
+   *
    * @param listString Sting in list format
    * @return List of String
    *
@@ -59,7 +59,7 @@ public class CollectionUtil {
 
   /**
    * Converts a String in list format (["1st element",2nd element"]) to a Array of Strings.
-   * 
+   *
    * @param listString Sting in list format
    * @return Array of String
    *
@@ -77,12 +77,18 @@ public class CollectionUtil {
   /**
    * Converts a String in list format (["1st element",2nd element"]) to a String with space
    * separation.
-   * 
+   *
    * @param listString Sting in list format
    * @return String
    *
    */
   public static String arrayToString(final String listString) {
     return StringUtils.join(CollectionUtil.toArray(listString), " ").replaceAll(" +", " ");
+  }
+
+  public static String replaceLast(final String sentence, final String word,
+      final String replacement) {
+    final int i = sentence.lastIndexOf(word);
+    return sentence.substring(0, i) + replacement + sentence.substring(i + word.length());
   }
 }
